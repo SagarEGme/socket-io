@@ -31,10 +31,14 @@ io.on('connection',(socket)=>{
         console.log("A user disconnected",socket.id)
     })
 
-    socket.on('message',(msg)=>{
-        console.log("message received", msg);
-        io.emit('message',msg)
+    socket.on('message',({message,room})=>{
+        console.log("message received", message);
+        io.to(room).emit('received-msg',message)
     })
+    socket.on("join-room",(room)=>{
+        socket.join(room)
+        console.log(`user join room ${room}`);
+      })
     
     socket.emit("welcome",`welcome to web sockets, ${socket.id}`)
     socket.broadcast.emit("welcome",` ${socket.id} joined the server.`)
