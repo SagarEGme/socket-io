@@ -31,9 +31,13 @@ io.on('connection',(socket)=>{
         console.log("A user disconnected",socket.id)
     })
 
-    socket.on('message',({message,room})=>{
-        console.log("message received", message);
-        io.to(room).emit('received-msg',message)
+    socket.on('message',(msgObj)=>{
+        console.log("message received", msgObj.message);
+        if(msgObj.room){
+            io.to(msgObj.room).emit('received-msg',msgObj.message)
+        } else {
+            socket.broadcast.emit("message",msgObj.message)
+        }
     })
     socket.on("join-room",(room)=>{
         socket.join(room)
